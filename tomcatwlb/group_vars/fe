@@ -1,0 +1,6 @@
+---
+derka: "bloooow me~!"
+key: /etc/nginx/ssl/nginx.key
+crt: /etc/nginx/ssl/nginx.crt
+cfg: /etc/nginx/sites-available/default
+server_name: localhost

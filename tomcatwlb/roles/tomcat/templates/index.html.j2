@@ -1,0 +1,15 @@
+<html>
+  <body>
+    <p>
+ {% if  'be2' in ansible_fqdn %}
+   <iframe src="http://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-229787.jpg" width="99%" height="700px"></iframe>
+ {% else %}
+   <iframe src="http://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-67193.jpg" width="99%" height="700px"></iframe>
+ {% endif %}
+    </p>
+    
+    <p>
+      {{ ansible_fqdn }}
+    </p>
+</body>
+</html>

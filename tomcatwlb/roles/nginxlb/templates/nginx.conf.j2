@@ -1,0 +1,29 @@
+http {
+     upstream {{server_name}} {
+     	ip_hash;
+     	{% for host in groups['be'] %}
+	server {{ansible_all_ipv4_addresses}}  {{ ansible_eth1.ipv4.address }}:8080;
+{#	{% if hostvars[host]['ansible_eth1']['active'] %}
+	   server  {{ hostvars[host]['ansible_eth1']['ipv4']['address'] }}
+	{% endif %}
+#}	{% endfor %}
+     }
+
+
+     server {
+       listen 80 default_server;
+       listen [::]:80 default_server ipv6only=on;
+       listen 443 ssl;
+       
+       root /usr/share/nginx/www;
+       index index.html index.htm;
+
+       server_name {{server_name}};
+       ssl_certificate {{crt}};
+       ssl_certificate_key {{key}};
+
+       location / {
+       		try_files $uri $uri/ =404;
+	}
+     }
+}
