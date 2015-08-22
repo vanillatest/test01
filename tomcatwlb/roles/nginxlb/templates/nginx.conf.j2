@@ -2,11 +2,9 @@
      upstream {{server_name}} {
 #     	ip_hash;
      	{% for host in groups['be'] %}
-	server   {{ ansible_eth1.ipv4.address }}:8080;
-{#	{% if hostvars[host]['ansible_eth1']['active'] %}
-	   server  {{ hostvars[host]['ansible_eth1']['ipv4']['address'] }}
-	{% endif %}
-#}	{% endfor %}
+{#	server   {{ hostvars[host].ansible_eth0.ipv4.address }}:8080; #}
+	server   {{ hostvars[host].ansible_eth1.ipv4.address }}:8080;
+	{% endfor %}
      }
 
 

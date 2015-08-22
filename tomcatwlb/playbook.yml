@@ -1,15 +1,15 @@
 #!/usr/bin/env ansible-playbook
 ---
 
-- hosts: fe
-  sudo: True
-  roles:
-    - nginxlb
-
 - hosts: be
   sudo: True
   roles:
     - tomcat
+
+- hosts: fe
+  sudo: True
+  roles:
+    - nginxlb
 
 - hosts: all
   sudo: True
