@@ -18,7 +18,10 @@
       apt: name=curl update_cache=yes cache_valid_time=3600
     - name: dumpvars
       template: src=dumpvars.txt.j2 dest=/tmp/dumpvars.txt
-      
+    - name: print ips
+      shell: ip addr show label e*
+
+
 - name: host ansible inventory
   sudo: False
   hosts: 127.0.0.1
@@ -28,38 +31,3 @@
       file: src=.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory dest=testinventory state=link
 
 
-#- name: ngix + tls
-#  hosts: fe
-#  sudo: True
-#  vars:
-#    key: /etc/nginx/ssl/nginx.key
-#    crt: /etc/nginx/ssl/nginx.crt
-#    cfg: /etc/nginx/sites-available/default
-#    name: localhost
-#  tasks:
-#  - name: install
-#    apt: name=nginx update_cache=yes cache_valid_time=3600
-#  - name: poop
-#  - file: path=/etc/nginx/ssl state=directory
-#  - copy: src=files/nginx.key dest={{key}} owner=root mode=0600
-#  - notify: restart nginx
-#  - copy: src=files/nginx.crt dest={{crt}}
-#  - notify: restart nginx
-#  - template: src=templates/nginx.conf.j2 dest={{cfg}}
-#  - notify: restart nginx
-#  - file: dest=/etc/nginx/sites-enabled/default src={{cfg}} state=link
-#  - notify: restart nginx
-#  - template: src=templates/index.html.j2 dest=/usr/share/nginx/www/index.html mode=0644
-#  - handlers:
-#    - name: restart nginx
-#      service: name=nginx state=restart
-
-#- name: back end tomcats
-#  hosts: be
-#  sudo: True
-#  vars:
-#    one: "i dunno yet"
-#  tasks:
-#  - name: install
-#    apt: name=tomcat7 update_cache=yes cache_valid_time=3600
-#    
