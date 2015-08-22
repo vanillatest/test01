@@ -14,11 +14,11 @@
 - hosts: all
   sudo: True
   tasks:
-    - name: dumpvars
-      template: src=dumpvars.txt.j2 dest=/tmp/dumpvars.txt
     - name: install curl
       apt: name=curl update_cache=yes cache_valid_time=3600
-    
+    - name: dumpvars
+      template: src=dumpvars.txt.j2 dest=/tmp/dumpvars.txt
+      
 - name: host ansible inventory
   sudo: False
   hosts: 127.0.0.1
