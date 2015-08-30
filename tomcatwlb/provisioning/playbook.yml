@@ -1,0 +1,45 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: host ansible inventory
+  gather_facts: false
+  sudo: False
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: symlink the generated ansible inventory
+      file: src=.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory dest=../testinventory state=link force=true
+
+- hosts: all
+  sudo: True
+  tasks:
+    - name: dumpvars
+      template: src=dumpvars.txt.j2 dest=/tmp/dumpvars.txt
+    - name: install curl + dumpvars
+      apt: name=curl update_cache=yes cache_valid_time=3600
+
+- hosts: be
+  gather_facts: true
+  sudo: True
+  roles:
+    - tomcat
+
+- hosts: fe
+  sudo: true
+  tasks:
+    - name: install nginx on fe
+      apt: name=nginx update_cache=yes cache_valid_time=3600
+    - name: get ip
+      shell: ip a
+      register: result.stdout_lines
+
+    - debug: var=result
+
+- hosts: all
+  sudo: true
+  gather_facts: True
+      
+- hosts: fe
+  sudo: True
+  roles:
+    - nginxlb

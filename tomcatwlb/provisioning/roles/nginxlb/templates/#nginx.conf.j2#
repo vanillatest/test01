@@ -1,0 +1,26 @@
+
+upstream {{server_name}} {
+#     	ip_hash;
+{% for host in groups['be'] %}
+  {#	server   {{ hostvars[host].ansible_eth0.ipv4.address }}:8080; #}
+  server   {{ hostvars[host].ansible_eth1.ipv4.address }}:8080;
+{% endfor %}
+}
+
+
+server {
+listen 80 default_server;
+listen [::]:80 default_server ipv6only=on;
+listen 443 ssl;
+
+root /usr/share/nginx/www;
+index index.html index.htm;
+
+server_name {{server_name}};
+ssl_certificate {{crt}};
+ssl_certificate_key {{key}};
+
+location / {
+proxy_pass http://{{ server_name }};
+}
+}

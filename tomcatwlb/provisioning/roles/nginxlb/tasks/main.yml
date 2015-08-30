@@ -1,7 +1,12 @@
 ---
-- name: install nginx
-  apt: name=nginx update_cache=yes cache_valid_time=3600
+#- debug: var=hostvars['be1']
+#- name: copy nginx conf
+#  template: src=nginx.conf.j2 dest=/tmp/nginx.conf
 
+
+#- name: install nginx
+#  apt: name=nginx update_cache=yes cache_valid_time=3600
+  
 - name: create dirs for ssl certs
   file: path=/etc/nginx/ssl state=directory
 
@@ -23,3 +28,5 @@
 
 - name: copy index
   template: src=index.html.j2 dest=/usr/share/nginx/www/index.html mode=0644
+
+#- debug: var=hostvars['be1']
