@@ -19,25 +19,28 @@
       apt: name=curl update_cache=yes cache_valid_time=3600
 
 - hosts: be
+  sudo: True
+  roles:
+    - inst_tomcat
+
+- hosts: fe
+  sudo: true
+  roles:
+    - inst_nginx
+  tasks:
+    - shell: for x in $(grep -Ev "^(Inter-| face |\s*\t*lo:)" /proc/net/dev | cut -d':' -f1 | tr -d ' '|sort -n); do ip addr show $x; done
+      register: result
+    - debug: var=result.stdout_lines
+
+- hosts: be
   gather_facts: true
   sudo: True
   roles:
     - tomcat
 
-- hosts: fe
-  sudo: true
-  tasks:
-    - name: install nginx on fe
-      apt: name=nginx update_cache=yes cache_valid_time=3600
-    - name: get ip
-      shell: ip a
-      register: result.stdout_lines
-
-    - debug: var=result
-
-- hosts: all
-  sudo: true
-  gather_facts: True
+#- hosts: all
+#  sudo: true
+#  gather_facts: True
       
 - hosts: fe
   sudo: True
