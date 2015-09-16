@@ -1,0 +1,3 @@
+---
+- name: copy index file - to test nginx as load balancer
+  template: src=index.html.j2 dest=/var/lib/tomcat7/webapps/ROOT/index.html

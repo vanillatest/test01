@@ -1,0 +1,25 @@
+---
+- name: create dirs for ssl certs
+  file: path=/etc/nginx/ssl state=directory
+
+- name: copy tls key and cert
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: "root"
+    mode: "0600"
+  with_items:
+    - { src: "nginx.key", dest: "{{key}}" }
+    - { src: "nginx.crt", dest: "{{crt}}" }
+  notify: restart nginx
+
+- name: copy nginx conf
+  template: src=nginx.conf.j2 dest={{cfg}}
+  notify: restart nginx
+
+- name: enable conf
+  file: src={{cfg}} dest=/etc/nginx/sites-enabled/default state=link
+  notify: restart nginx
+
+#- name: copy index
+#  template: src=index.html.j2 dest=/usr/share/nginx/www/index.html mode=0644

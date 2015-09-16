@@ -1,48 +1,56 @@
 #!/usr/bin/env ansible-playbook
 ---
 
+# create single easy-access inventory file
 - name: host ansible inventory
   gather_facts: false
-  sudo: False
+  become: False
   hosts: 127.0.0.1
   connection: local
   tasks:
     - name: symlink the generated ansible inventory
       file: src=.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory dest=../testinventory state=link force=true
 
-- hosts: all
-  sudo: True
-  tasks:
-    - name: dumpvars
-      template: src=dumpvars.txt.j2 dest=/tmp/dumpvars.txt
-    - name: install curl + dumpvars
-      apt: name=curl update_cache=yes cache_valid_time=3600
+# debugging fun - dump all vars to a single file #
+#- hosts: all
+#  become: True
+#  tasks:
+#    - name: dumpvars
+#      template: src=dumpvars.txt.j2 dest=/tmp/dumpvars.txt
+#    - name: install curl + dumpvars
+#      apt: name=curl update_cache=yes cache_valid_time=3600
 
+
+# install tomcat on back-end systems
 - hosts: be
-  sudo: True
-  roles:
-    - inst_tomcat
-
-- hosts: fe
-  sudo: true
-  roles:
-    - inst_nginx
+  become: True
   tasks:
-    - shell: for x in $(grep -Ev "^(Inter-| face |\s*\t*lo:)" /proc/net/dev | cut -d':' -f1 | tr -d ' '|sort -n); do ip addr show $x; done
-      register: result
-    - debug: var=result.stdout_lines
+    - include: roles/tomcat/tasks/install-tomcat.yml
 
+# install nginx on front-end systems
+- hosts: fe
+  become: true
+  tasks:
+    - include: roles/nginxlb/tasks/install-nginx.yml
+
+
+# debugging fun - get ip addrs for each system #
+#- hosts: all
+#  tasks: 
+#    - shell: for x in $(grep -Ev "^(Inter-| face |\s*\t*lo:)" /proc/net/dev | cut -d':' -f1 | tr -d ' '|sort -n); do ip addr show $x; done
+#      register: result
+#    - debug: var=result.stdout_lines
+
+
+# configure tomcat
 - hosts: be
   gather_facts: true
-  sudo: True
+  become: True
   roles:
     - tomcat
 
-#- hosts: all
-#  sudo: true
-#  gather_facts: True
-      
+# configure nginx as lb      
 - hosts: fe
-  sudo: True
+  become: True
   roles:
     - nginxlb
