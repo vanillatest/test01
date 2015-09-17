@@ -38,6 +38,10 @@ poweroff:
 provision: 
 	ansible-playbook -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory  $$(/bin/grep "playbook" Vagrantfile | grep -Ev "^\s*\t*#" | cut -d'=' -f2| cut -d'"' -f2)
 
+
+factip:
+	for x in facts_json/*; do  python -m json.tool < $$x  | /bin/grep -E '"address"|ansible_fqdn' | /bin/grep -Ev "127.0.0.1|::1"; done
+
 pretty: cleantmp
 	find . -type f -name "*~" -exec rm -f {} +;
 
